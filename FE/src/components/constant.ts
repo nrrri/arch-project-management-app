@@ -1,0 +1,42 @@
+export const projectData = [
+  {
+    project: "Urban Renewal Phase 1",
+    startDate: "2024-07-18",
+    numberOfStage: 5,
+    owner: "Mr. Doe",
+    location: "Toronto, ON",
+    finished: true,
+  },
+  {
+    project: "Green Villa Complex",
+    startDate: "2024-06-10",
+    numberOfStage: 3,
+    owner: "Ms. Smith",
+    location: "Vancouver, BC",
+    finished: false,
+  },
+  {
+    project: "Heritage Museum Renovation",
+    startDate: "2024-05-01",
+    numberOfStage: 4,
+    owner: "Dr. Lee",
+    location: "Calgary, AB",
+    finished: true,
+  },
+  {
+    project: "Downtown Parking Expansion",
+    startDate: "2024-08-05",
+    numberOfStage: 6,
+    owner: "Mrs. Patel",
+    location: "Ottawa, ON",
+    finished: false,
+  },
+  {
+    project: "Maple Ridge Housing",
+    startDate: "2024-04-22",
+    numberOfStage: 2,
+    owner: "Mr. Nakamura",
+    location: "Montreal, QC",
+    finished: true,
+  },
+];
