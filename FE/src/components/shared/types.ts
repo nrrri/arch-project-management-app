@@ -1,14 +1,16 @@
-export type projectType = {
+
+export type ProjectType = {
+  id: string;
   project: string;
   startDate: string;
   numberOfStage: number;
   owner: string;
   location: string;
   finished: boolean;
-  stage?: stageType[];
+  stage?: MilestoneType[];
 };
 
-type stageType = {
+type MilestoneType = {
   stageName: string;
   stageNumber: number;
   picture?: [];

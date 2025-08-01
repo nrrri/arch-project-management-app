@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react"
-import { Button } from "../shared/ui/button"
 import AllProjects from "./Projects/Projects"
 import { Link } from "react-router-dom"
+import { Button } from "../ui/button"
 
 
 const Home: React.FC = () => {

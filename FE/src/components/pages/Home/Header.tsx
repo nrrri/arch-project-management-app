@@ -1,5 +1,5 @@
+import { Button } from "@/components/ui/button"
 import { House } from "lucide-react"
-import { Button } from "../../shared/ui/button"
 import { Link, Outlet } from "react-router-dom"
 
 interface HeaderProps {

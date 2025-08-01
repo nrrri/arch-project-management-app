@@ -1,6 +1,8 @@
-import { Button } from "@/components/shared/ui/button"
 import { useEffect, useState } from "react"
 import axios from 'axios'
+import React from "react"
+import { Button } from "@/components/ui/button"
+import { DateInput } from "../CreateProject/DateInput"
 const mapboxToken = import.meta.env.MAP_TOKEN
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CreateProjectProps {
@@ -9,6 +11,7 @@ interface CreateProjectProps {
 const CreateProject: React.FC<CreateProjectProps> = () => {
     const [suggestions, setSuggestions] = useState<string[]>([])
     const [address, setAddress] = useState('')
+    // const [date, setDate] = useState<Date | undefined>(new Date())
     useEffect(() => {
         const fetchSuggestions = async () => {
             if (!address) {
@@ -95,13 +98,23 @@ const CreateProject: React.FC<CreateProjectProps> = () => {
                     </div>
                     <div className={StyledInputComponent}>
                         <label className="bold" htmlFor="">Start date</label>
-                        <input
-                            type="date"
-                            name="projectName"
-                            value={''}
-                            className={`${StyledInputPlaceholder}`} />
+                        <DateInput />
                     </div>
-                    <Button className="mt-8 cursor-pointer">Create</Button>
+                    <div className={StyledInputComponent}>
+                        <label htmlFor="">Number of stage</label>
+                        <input
+                            type="number"
+                            name="owner"
+                            value={''}
+                            className={StyledInputPlaceholder} />
+                    </div>
+                    <Button
+                        className="mt-8 cursor-pointer"
+                    // todo: add project in redux react
+                    // onSubmit={console.log('set')}
+                    >
+                        Create
+                    </Button>
                 </form>
             </div>
         </div>
@@ -113,7 +126,7 @@ const CreateProject: React.FC<CreateProjectProps> = () => {
   owner: string;
   location: string;
   finished: boolean;
-  stage?: stageType[];
+  stage?: MilestoneType[];
  */
 
 const StyledInputComponent = `flex flex-col`

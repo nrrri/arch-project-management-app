@@ -1,5 +1,6 @@
 export const projectData = [
   {
+    id: 1,
     project: "Urban Renewal Phase 1",
     startDate: "2024-07-18",
     numberOfStage: 5,
@@ -8,6 +9,7 @@ export const projectData = [
     finished: true,
   },
   {
+    id: 2,
     project: "Green Villa Complex",
     startDate: "2024-06-10",
     numberOfStage: 3,
@@ -16,6 +18,7 @@ export const projectData = [
     finished: false,
   },
   {
+    id: 3,
     project: "Heritage Museum Renovation",
     startDate: "2024-05-01",
     numberOfStage: 4,
@@ -24,6 +27,7 @@ export const projectData = [
     finished: true,
   },
   {
+    id: 4,
     project: "Downtown Parking Expansion",
     startDate: "2024-08-05",
     numberOfStage: 6,
@@ -32,6 +36,7 @@ export const projectData = [
     finished: false,
   },
   {
+    id: 5,
     project: "Maple Ridge Housing",
     startDate: "2024-04-22",
     numberOfStage: 2,
