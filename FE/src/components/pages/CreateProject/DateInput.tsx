@@ -14,15 +14,16 @@ export function DateInput() {
     const [date, setDate] = React.useState<Date | undefined>(undefined)
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 just">
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
                         id="date"
-                        className="w-48 justify-between font-normal"
+                        className="justify-between"
                     >
-                        {date ? date.toLocaleDateString() : "Select date"}
+                        <span className="text-sm font-light">{date ? date.toLocaleDateString() : "Select date"}</span>
+
                         <ChevronDownIcon />
                     </Button>
                 </PopoverTrigger>

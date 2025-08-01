@@ -3,6 +3,8 @@ import axios from 'axios'
 import React from "react"
 import { Button } from "@/components/ui/button"
 import { DateInput } from "../CreateProject/DateInput"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 const mapboxToken = import.meta.env.MAP_TOKEN
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface CreateProjectProps {
@@ -56,18 +58,17 @@ const CreateProject: React.FC<CreateProjectProps> = () => {
                 {/* todo: input */}
                 <form className="flex flex-col gap-3 m-8">
                     <div className={StyledInputComponent}>
-                        <label htmlFor="">Project name</label>
-                        <input
+                        <Label htmlFor="">Project name</Label>
+                        <Input
                             type="text"
-                            name="projectName"
                             value={''}
-                            className={StyledInputPlaceholder} />
+                            name="projectName" />
                     </div>
                     <div className={`relative ${StyledInputComponent}`}>
-                        <label htmlFor="">Location</label>
-                        <input
+                        <Label htmlFor="">Location</Label>
+                        <Input
                             type="text"
-                            name="owner"
+                            name="location"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             className={StyledInputPlaceholder} />
@@ -89,26 +90,22 @@ const CreateProject: React.FC<CreateProjectProps> = () => {
                         )}
                     </div>
                     <div className={StyledInputComponent}>
-                        <label htmlFor="">Owner</label>
-                        <input
+                        <Label htmlFor="">Owner</Label>
+                        <Input
                             type="text"
-                            name="owner"
                             value={''}
-                            className={StyledInputPlaceholder} />
+                            name="owner" />
                     </div>
                     <div className={StyledInputComponent}>
-                        <label className="bold" htmlFor="">Start date</label>
+                        <Label htmlFor="">Start date</Label>
                         <DateInput />
                     </div>
                     <div className={StyledInputComponent}>
-                        <label htmlFor="">Number of stage</label>
-                        <input
-                            type="number"
-                            name="owner"
-                            value={''}
-                            className={StyledInputPlaceholder} />
+                        <Label htmlFor="">Number of stage</Label>
+                        <Input type="number" min={1} />
                     </div>
                     <Button
+                        type="submit"
                         className="mt-8 cursor-pointer"
                     // todo: add project in redux react
                     // onSubmit={console.log('set')}
@@ -129,7 +126,7 @@ const CreateProject: React.FC<CreateProjectProps> = () => {
   stage?: MilestoneType[];
  */
 
-const StyledInputComponent = `flex flex-col`
+const StyledInputComponent = `flex flex-col gap-1`
 const StyledInputPlaceholder = `border rounded-lg px-3`
 
 export default CreateProject
