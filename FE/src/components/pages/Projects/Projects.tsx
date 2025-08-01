@@ -1,4 +1,5 @@
-import { projectData } from "../constant"
+import type { projectType } from "@/components/shared/types"
+import { projectData } from "../../shared/constant"
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface ProjectsProps {
@@ -10,14 +11,14 @@ const Projects: React.FC<ProjectsProps> = () => {
         // todo: implement project page 
     }
 
-    const sortByUnfinished = () => {
-        return projectData.sort((a, b) => {
+    const sortByUnfinished = (data: projectType[]) => {
+        return data.sort((a, b) => {
             return Number(a.finished) - Number(b.finished)
         })
     }
     return (
         <div className="grid grid-cols-3 gap-4 m-8">
-            {sortByUnfinished().map((pj, idx) => {
+            {sortByUnfinished(projectData).map((pj, idx) => {
                 return (
                     <div
                         key={idx}
