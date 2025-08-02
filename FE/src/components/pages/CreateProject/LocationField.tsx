@@ -17,15 +17,13 @@ const LocationField: React.FC<ProjectsProps> = ({ inputData, setProjectInput }) 
     const [suggestions, setSuggestions] = useState<string[]>([])
     const [address, setAddress] = useState('')
     const { label, name, type, value, checkError } = inputData
-    const mapboxToken = import.meta.env.MAP_TOKEN
-
+    const mapboxToken = import.meta.env.VITE_MAP_TOKEN
     const locationSuggestion = () => {
         return <>
             {
                 suggestions.length > 0 && (
                     <ul className="absolute bg-white border w-full mt-1 rounded shadow z-10">
                         {suggestions.map((suggestion, index) => {
-                            console.log(suggestion)
                             return (
                                 <li
                                     key={index}
@@ -64,9 +62,12 @@ const LocationField: React.FC<ProjectsProps> = ({ inputData, setProjectInput }) 
                         },
                     }
                 )
-
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const results = response.data.features.map((f: any) => f.place_name)
+
+                // ! test
+                console.log('results', results, response)
+
                 setSuggestions(results)
             } catch (error) {
                 console.error('Mapbox autocomplete error:', error)
@@ -75,7 +76,7 @@ const LocationField: React.FC<ProjectsProps> = ({ inputData, setProjectInput }) 
 
         const debounce = setTimeout(fetchSuggestions, 300)
         return () => clearTimeout(debounce)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [address])
 
 

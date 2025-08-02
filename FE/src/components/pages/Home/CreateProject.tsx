@@ -7,13 +7,16 @@ import { type ProjectFieldsType, type ProjectType } from "@/components/shared/ty
 import { importantFieldError, initialInput, updateProjectFields } from "@/components/shared/utils"
 import { v1 as uuidv1 } from 'uuid';
 import { useDispatch } from "react-redux"
-import { addProject } from "@/features/projectSlice"
 import { StyledInputComponent } from "@/components/shared/constant"
 import LocationField from "../CreateProject/locationField"
 import DateInput from "../CreateProject/DateInput"
+import type { AppDispatch } from "@/app/store"
+import { useNavigate } from "react-router-dom"
+import { addProject } from "@/features/projectSlice"
 
 const CreateProject: React.FC = () => {
-    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
     const [projectInput, setProjectInput] = useState<ProjectType>({
         id: undefined,
         project: '',
@@ -121,27 +124,30 @@ const CreateProject: React.FC = () => {
                 )
         }
     }
-    const onSubmit = async () => {
-        try {
-            const tempProject: ProjectType = {
+    const handleSubmit = async () => {
+        if (checkImportantField(projectInput)) {
+            setNewProject({
                 ...projectInput,
                 id: uuidv1(),
                 finished: false,
                 milestones: [],
-            }
-            if (checkImportantField(projectInput)) {
-                setNewProject(tempProject)
+            })
+
+            try {
                 if (newProject) {
-                    console.log('dispatch new project', newProject)
                     await dispatch(addProject(newProject))
                 }
+
+            } catch (err) {
+                console.error('Error submitting project:', err);
+            } finally {
+                setProjectInput(initialInput)
+                navigate('/')
             }
-        } catch (error) {
-            console.log(error)
-        } finally {
-            // setProjectInput(initialInput)
+
         }
     }
+
     const checkImportantField = (projectDetail: ProjectType) => {
         const { numberOfmilestone, startDate, project, location, owner } = projectDetail
         if (startDate) {
@@ -160,23 +166,24 @@ const CreateProject: React.FC = () => {
 
     return (
         <div className="flex justify-center ">
-            <div className="mt-40 border w-[600px] h-[600px] p-6 rounded-2xl">
+            <div
+                className="mt-40 border w-[600px] p-6 rounded-2xl">
                 <h1 className="text-2xl text-center">
                     Create New Project
                 </h1>
                 {/* todo: input */}
                 <div className="flex flex-col gap-3 m-8">
                     {/* ! INPUT FIELD */}
-                    <div>{ProjectFields.map((field, idx) =>
-                        <div key={idx} className="flex flex-col my-3">
-                            {formInput(field)}
-                        </div>
-                    )}</div>
+                    <div>
+                        {ProjectFields.map((field, idx) =>
+                            <div key={idx} className="flex flex-col my-3">
+                                {formInput(field)}
+                            </div>
+                        )}
+                    </div>
                     <Button
-                        // type="submit"
                         className="mt-8 cursor-pointer"
-                        // todo: add project in redux react
-                        onClick={() => onSubmit()}
+                        onClick={handleSubmit}
                     >
                         Create
                     </Button>

@@ -2,11 +2,15 @@ import type { ProjectType } from "@/components/shared/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface ProjectState {
-  list: ProjectType[];
+  projects: ProjectType[];
+  status: "idle" | "succeeded" | "failed" | "loading";
+  error: null | string;
 }
 
 const initialState: ProjectState = {
-  list: [],
+  projects: [],
+  status: "idle",
+  error: null,
 };
 
 const projectSlice = createSlice({
@@ -14,19 +18,36 @@ const projectSlice = createSlice({
   initialState,
   reducers: {
     addProject(state, action: PayloadAction<ProjectType>) {
-      state.list.push(action.payload);
-      console.log(state.list);
+      state.projects.push(action.payload);
     },
-    addMilestone(state, action: PayloadAction<ProjectType[]>) {
-      state.list = action.payload;
+    setStatus: (state, action: PayloadAction<ProjectState["status"]>) => {
+      state.status = action.payload;
     },
-    toggleFinished(state, action: PayloadAction<string>) {
-      const project = state.list.find((p) => p.project === action.payload);
-      if (project) project.finished = !project.finished;
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
+    addMilestone: (state, action: PayloadAction<ProjectType[]>) => {
+      state.projects = action.payload;
     },
   },
+  // extraReducers: (builder) => {
+  //   builder
+  //     .addCase(addProject.pending, (state) => {
+  //       state.status = "loading";
+  //     })
+  //     .addCase(
+  //       addProject.fulfilled,
+  //       (state, action: PayloadAction<ProjectType>) => {
+  //         state.status = "succeeded";
+  //         state.projects.push(action.payload); // add new project to state
+  //       }
+  //     )
+  //     .addCase(addProject.rejected, (state, action) => {
+  //       state.status = "failed";
+  //       state.error = action.payload as string;
+  //     });
+  // },
 });
-
-export const { addProject, addMilestone, toggleFinished } =
+export const { addProject, addMilestone } =
   projectSlice.actions;
 export default projectSlice.reducer;
