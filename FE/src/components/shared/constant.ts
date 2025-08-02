@@ -45,3 +45,6 @@ export const projectData = [
     finished: true,
   },
 ];
+
+
+export const StyledInputComponent = `flex flex-col gap-1`;

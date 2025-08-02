@@ -8,11 +8,15 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { updateProjectFields } from "@/components/shared/utils"
+import type { ProjectType } from "@/components/shared/types"
 
-export function DateInput() {
+interface DateInputProps {
+    setProjectInput: React.Dispatch<React.SetStateAction<ProjectType>>
+    startDate: Date | undefined;
+}
+const DateInput: React.FC<DateInputProps> = ({ setProjectInput, startDate }) => {
     const [open, setOpen] = React.useState(false)
-    const [date, setDate] = React.useState<Date | undefined>(undefined)
-
     return (
         <div className="flex flex-col gap-3 just">
             <Popover open={open} onOpenChange={setOpen}>
@@ -22,7 +26,7 @@ export function DateInput() {
                         id="date"
                         className="justify-between"
                     >
-                        <span className="text-sm font-light">{date ? date.toLocaleDateString() : "Select date"}</span>
+                        <span className="text-sm font-light">{startDate ? startDate.toLocaleDateString() : "Select date"}</span>
 
                         <ChevronDownIcon />
                     </Button>
@@ -30,10 +34,13 @@ export function DateInput() {
                 <PopoverContent className="w-auto overflow-hidden p-0" align="start">
                     <Calendar
                         mode="single"
-                        selected={date}
+                        selected={startDate}
                         captionLayout="dropdown"
-                        onSelect={(date) => {
-                            setDate(date)
+                        
+                        onSelect={(startDate) => {
+                            updateProjectFields(setProjectInput, {
+                                startDate: startDate
+                            })
                             setOpen(false)
                         }}
                     />
@@ -42,3 +49,5 @@ export function DateInput() {
         </div>
     )
 }
+
+export default DateInput

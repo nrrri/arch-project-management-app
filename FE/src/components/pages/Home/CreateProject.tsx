@@ -1,53 +1,162 @@
-import { useEffect, useState } from "react"
-import axios from 'axios'
+import { useState } from "react"
 import React from "react"
 import { Button } from "@/components/ui/button"
-import { DateInput } from "../CreateProject/DateInput"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-const mapboxToken = import.meta.env.MAP_TOKEN
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface CreateProjectProps {
+import { type ProjectFieldsType, type ProjectType } from "@/components/shared/types"
+import { importantFieldError, initialInput, updateProjectFields } from "@/components/shared/utils"
+import { v1 as uuidv1 } from 'uuid';
+import { useDispatch } from "react-redux"
+import { addProject } from "@/features/projectSlice"
+import { StyledInputComponent } from "@/components/shared/constant"
+import LocationField from "../CreateProject/locationField"
+import DateInput from "../CreateProject/DateInput"
 
-}
-const CreateProject: React.FC<CreateProjectProps> = () => {
-    const [suggestions, setSuggestions] = useState<string[]>([])
-    const [address, setAddress] = useState('')
-    // const [date, setDate] = useState<Date | undefined>(new Date())
-    useEffect(() => {
-        const fetchSuggestions = async () => {
-            if (!address) {
-                setSuggestions([])
-                return
-            }
+const CreateProject: React.FC = () => {
+    const dispatch = useDispatch();
+    const [projectInput, setProjectInput] = useState<ProjectType>({
+        id: undefined,
+        project: '',
+        startDate: undefined,
+        numberOfmilestone: 1,
+        owner: '',
+        location: '',
+        finished: false,
+        milestones: [],
+    });
+    const [newProject, setNewProject] = useState<ProjectType | null>(null)
 
-            try {
-                const response = await axios.get(
-                    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-                        address
-                    )}.json`,
-                    {
-                        params: {
-                            access_token: mapboxToken,
-                            autocomplete: true,
-                            country: 'CA', // Optional: restrict to Canada
-                            limit: 5,
-                        },
-                    }
+    const ProjectFields: ProjectFieldsType[] = [
+        {
+            label: 'Project Name',
+            name: 'project',
+            type: 'text',
+            value: projectInput.project,
+            checkError: newProject?.project
+        },
+        {
+            label: 'Location',
+            name: 'location',
+            type: 'text',
+            value: projectInput.location,
+            checkError: newProject?.location
+        },
+        {
+            label: 'Owner',
+            name: 'owner',
+            type: 'text',
+            value: projectInput.owner,
+            checkError: newProject?.owner
+        },
+        {
+            label: 'Start Date',
+            name: 'startDate',
+            checkError: String(newProject?.startDate)
+        },
+        {
+            label: 'Number of milestone',
+            name: 'numberOfmilestone',
+            type: 'number',
+            value: String(projectInput.numberOfmilestone),
+            checkError: String(newProject?.numberOfmilestone)
+        },
+    ]
+
+    const formInput = ({ label, name, type, value, checkError }: ProjectFieldsType) => {
+        const inputData = { label, name, type, value, checkError }
+        switch (name) {
+            case 'project':
+            case 'owner':
+                return (
+                    <div className={StyledInputComponent}>
+                        <div className="flex gap-2 items-center justify-between">
+                            <Label className="gap-1">
+                                {label}
+                                <span className="text-red-500">*</span>
+                            </Label>
+                            <span className="text-red-600 text-xs">{importantFieldError(checkError)}</span>
+                        </div>
+                        <Input
+                            type={type}
+                            value={value}
+                            onChange={(e) => updateProjectFields(setProjectInput, {
+                                [name]: e.target.value
+                            })} />
+                    </div>
                 )
-
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const results = response.data.features.map((f: any) => f.place_name)
-                setSuggestions(results)
-            } catch (error) {
-                console.error('Mapbox autocomplete error:', error)
-            }
+            case 'numberOfmilestone':
+                return (
+                    <div className={StyledInputComponent}>
+                        <div className="flex gap-2 items-center">
+                            <Label className="gap-1">
+                                {label}
+                            </Label>
+                            <span className="text-red-600 text-xs">{importantFieldError(checkError)}</span>
+                        </div>
+                        <Input
+                            min={1}
+                            type={type}
+                            value={value}
+                            onChange={(e) => updateProjectFields(setProjectInput, {
+                                [name]: Number(e.target.value)
+                            })} />
+                    </div>
+                )
+            case 'location':
+                return (
+                    <LocationField setProjectInput={setProjectInput} inputData={inputData} />
+                )
+            case 'startDate':
+                return (
+                    <div className={StyledInputComponent}>
+                        <div className="flex gap-2 items-center justify-between">
+                            <Label className="gap-1">
+                                {label}
+                                <span className="text-red-500">*</span>
+                            </Label>
+                            <span className="text-red-600 text-xs">{newProject !== null && !newProject.startDate && 'Please fill out this field'}</span>
+                        </div>
+                        <DateInput startDate={projectInput.startDate} setProjectInput={setProjectInput} />
+                    </div>
+                )
         }
-
-        const debounce = setTimeout(fetchSuggestions, 300)
-        return () => clearTimeout(debounce)
-    }, [address])
-
+    }
+    const onSubmit = async () => {
+        try {
+            const tempProject: ProjectType = {
+                ...projectInput,
+                id: uuidv1(),
+                finished: false,
+                milestones: [],
+            }
+            if (checkImportantField(projectInput)) {
+                setNewProject(tempProject)
+                if (newProject) {
+                    console.log('dispatch new project', newProject)
+                    await dispatch(addProject(newProject))
+                }
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            // setProjectInput(initialInput)
+        }
+    }
+    const checkImportantField = (projectDetail: ProjectType) => {
+        const { numberOfmilestone, startDate, project, location, owner } = projectDetail
+        if (startDate) {
+            const checkField = [
+                String(numberOfmilestone),
+                project,
+                startDate.toLocaleDateString(),
+                location,
+                owner
+            ]
+            return checkField.every((field) => field?.trim() !== '' && field?.trim())
+        } else {
+            return false;
+        }
+    }
 
     return (
         <div className="flex justify-center ">
@@ -56,77 +165,26 @@ const CreateProject: React.FC<CreateProjectProps> = () => {
                     Create New Project
                 </h1>
                 {/* todo: input */}
-                <form className="flex flex-col gap-3 m-8">
-                    <div className={StyledInputComponent}>
-                        <Label htmlFor="">Project name</Label>
-                        <Input
-                            type="text"
-                            value={''}
-                            name="projectName" />
-                    </div>
-                    <div className={`relative ${StyledInputComponent}`}>
-                        <Label htmlFor="">Location</Label>
-                        <Input
-                            type="text"
-                            name="location"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            className={StyledInputPlaceholder} />
-                        {suggestions.length > 0 && (
-                            <ul className="absolute bg-white border w-full mt-1 rounded shadow z-10">
-                                {suggestions.map((suggestion, index) => {
-                                    console.log(suggestion)
-                                    return (
-                                        <li
-                                            key={index}
-                                            onClick={() => setAddress(suggestion)}
-                                            className="p-2 hover:bg-gray-100 cursor-pointer"
-                                        >
-                                            {suggestion}
-                                        </li>
-                                    )
-                                })}
-                            </ul>
-                        )}
-                    </div>
-                    <div className={StyledInputComponent}>
-                        <Label htmlFor="">Owner</Label>
-                        <Input
-                            type="text"
-                            value={''}
-                            name="owner" />
-                    </div>
-                    <div className={StyledInputComponent}>
-                        <Label htmlFor="">Start date</Label>
-                        <DateInput />
-                    </div>
-                    <div className={StyledInputComponent}>
-                        <Label htmlFor="">Number of stage</Label>
-                        <Input type="number" min={1} />
-                    </div>
+                <div className="flex flex-col gap-3 m-8">
+                    {/* ! INPUT FIELD */}
+                    <div>{ProjectFields.map((field, idx) =>
+                        <div key={idx} className="flex flex-col my-3">
+                            {formInput(field)}
+                        </div>
+                    )}</div>
                     <Button
-                        type="submit"
+                        // type="submit"
                         className="mt-8 cursor-pointer"
-                    // todo: add project in redux react
-                    // onSubmit={console.log('set')}
+                        // todo: add project in redux react
+                        onClick={() => onSubmit()}
                     >
                         Create
                     </Button>
-                </form>
+                </div>
             </div>
         </div>
     )
 }
-/*
-  startDate: string;
-  numberOfStage: number;
-  owner: string;
-  location: string;
-  finished: boolean;
-  stage?: MilestoneType[];
- */
 
-const StyledInputComponent = `flex flex-col gap-1`
-const StyledInputPlaceholder = `border rounded-lg px-3`
 
 export default CreateProject

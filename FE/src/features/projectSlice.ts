@@ -2,29 +2,31 @@ import type { ProjectType } from "@/components/shared/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface ProjectState {
-  projects: ProjectType[];
+  list: ProjectType[];
 }
 
 const initialState: ProjectState = {
-  projects: [],
+  list: [],
 };
 
 const projectSlice = createSlice({
-  name: "project",
+  name: "projects",
   initialState,
   reducers: {
     addProject(state, action: PayloadAction<ProjectType>) {
-      state.projects.push(action.payload);
+      state.list.push(action.payload);
+      console.log(state.list);
     },
     addMilestone(state, action: PayloadAction<ProjectType[]>) {
-      state.projects = action.payload;
+      state.list = action.payload;
     },
     toggleFinished(state, action: PayloadAction<string>) {
-      const project = state.projects.find((p) => p.project === action.payload);
+      const project = state.list.find((p) => p.project === action.payload);
       if (project) project.finished = !project.finished;
     },
   },
 });
 
-export const { addProject, toggleFinished } = projectSlice.actions;
+export const { addProject, addMilestone, toggleFinished } =
+  projectSlice.actions;
 export default projectSlice.reducer;

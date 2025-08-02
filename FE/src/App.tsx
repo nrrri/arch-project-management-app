@@ -27,7 +27,7 @@ export default function App() {
                 <Route index element={<Home />} />
                 <Route path='/create-project' element={<CreateProject />} />
                 {/* todo: change id */}
-                <Route path='/project/:prj-name' element={<Project />} />
+                <Route path='/project/:name' element={<Project />} />
               </Route>
             </Routes>
           </Router>
